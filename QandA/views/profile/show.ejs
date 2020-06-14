@@ -1,0 +1,35 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <% if(currentUser.profilePhoto==="anonymous"){ %>
+                <img class="img-circle" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAFoAVAMBIgACEQEDEQH/xAAbAAEAAwEBAQEAAAAAAAAAAAAABAUGAwECB//EAC8QAAIBAwIEAwYHAAAAAAAAAAABAgMEERIxBSFBUSJxkRMVMlNysRQzUmFiocH/xAAYAQADAQEAAAAAAAAAAAAAAAAAAgMBBP/EABwRAQEAAgIDAAAAAAAAAAAAAAABAhESMQMTIf/aAAwDAQACEQMRAD8A/RAAdKQAd7W1qXU9NNclvJ7Iy3QcD0vqHC7em8yTqP8AlsdZ2FrPGaEOXZY+wnshuLNguL3hcdGu1TUs/Bnkyrr0alCeirHS8ZGmUrLNOYAGYAAAAAA9NLZ0VQtoU+qXPzM3T/Mh9SNWS8h8QAEzBC4tSVSznJ7w8Sf3JpH4g8WNf6GjZ2ys0ADoTAAAAAAerOVpTb6JGri8xT2yjL0JqnXpze0ZJmpJeQ+IACZgh8WbVjPSm84XLpzJhG4jP2dlWfeOn15GzsVmwAdCQAAAAAAaDhdy7mg9eNUHjl1M+TuEVnTu1DdVOTEzm4aX6vwAROFNxm5bn+HWNKw2+uS3nLRFyeyWTL1qjrVZ1JbyeR8Julyr4ABYgAAAAAAS+Fxcr6lhZxlv9uR7Z2FW5al8FP8AU+vkXlvb07enopRwur6snllOjSOoAJHfFWLlTlFbtNGWw1yaaa3TNYRL2wp3S1fDU6SX+j4ZaZZtnQdri3q209NWOOz6M4lkwAAFz7mh86fohK1s7DRO4bm5SxHKzl+S8i0PHuc/KqaiD73sVPT7bPlCXfGNtxLi9jF4lWxtvCXVZ7dibhdhhdjGoj4rZxg5yrJRTkn4Xyw8PodKd9b1NWibemUYvwSXN7dP7O+F2PcAEKXFbWMpRlJpxznbliTj37o+Fxm0cNScsLfKxjw6vtn0J+F2GF2AK98Usq1SNvPMnUaSTjyeXgVOD0ZSzCc4LtuWGEfRstnQ0qvc0PnT9EC1BvKs1H//2Q==">
+            <% }else{ %>
+                <img class="img-circle" src="/questions/profile/<%= currentUser.profilePhoto %>" alt="">
+            <% } %>
+            <form class="tar" action="questions/<%= currentUser._id %>/profile" method="POST" enctype="multipart/form-data">
+                <div class="custom-file mb-3">
+                    <label class="oo">Add a photo
+                    <input type="file" name="file" id="file">
+                    </label>
+                </div>
+            </form>
+            </div>
+        <div class="col-md-6">
+            <p><strong><%= currentUser.username %>'s Feed</strong></p>
+            <hr>
+            <% questions.forEach(function(q){ %>
+                <%q.answers.forEach(function(i){ %>
+                    <% if(currentUser && i.author.id.equals(currentUser._id)){ %>
+                        <p><strong><%= q.question %></strong></p>
+                        <p><%- i.answer %></p>
+                        <hr>
+                    <% }%>
+                <% }) %>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
+<% include ../partials/footer %>

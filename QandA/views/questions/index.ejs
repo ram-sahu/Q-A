@@ -1,0 +1,107 @@
+<!--This Page will Show all the questions and answers present in the database.-->
+
+<% include ../partials/header %>
+
+<% questions.forEach(function(i){ %>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                
+            </div>
+            <div id="divcon" class="col-md-7">
+                <span class="heading_style"><a href="/questions/<%= i._id %>"><%= i.question %></a></span>
+                <% var maxLike=0 , maxId=0; %>
+                <% i.answers.forEach(function(ansid){ %>
+                    <% if(ansid.likes >= maxLike){ maxLike = ansid.likes ; maxId = ansid } %>
+                <% }) %>
+                <% if(maxId !=0){ %>
+                    <%User.findById(maxId.author.id ,function(err,user){ %>
+                    <% if(err){ %>
+                        <%console.log("error") %>
+                    <% }else{ %>
+                        <% maxId.author.profilePhoto = user.profilePhoto; %>
+                        <% maxId.save(); %>
+                        <% } %>
+                    <% });%>
+                <% } %>
+                <% if(maxId != 0){ %>
+                    <div>
+                        <% if(maxId.author.profilePhoto==="anonymous"){ %>
+                            <img class="img-circl" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAFoAVAMBIgACEQEDEQH/xAAbAAEAAwEBAQEAAAAAAAAAAAAABAUGAwECB//EAC8QAAIBAwIEAwYHAAAAAAAAAAABAgMEERIxBSFBUSJxkRMVMlNysRQzUmFiocH/xAAYAQADAQEAAAAAAAAAAAAAAAAAAgMBBP/EABwRAQEAAgIDAAAAAAAAAAAAAAABAhESMQMTIf/aAAwDAQACEQMRAD8A/RAAdKQAd7W1qXU9NNclvJ7Iy3QcD0vqHC7em8yTqP8AlsdZ2FrPGaEOXZY+wnshuLNguL3hcdGu1TUs/Bnkyrr0alCeirHS8ZGmUrLNOYAGYAAAAAA9NLZ0VQtoU+qXPzM3T/Mh9SNWS8h8QAEzBC4tSVSznJ7w8Sf3JpH4g8WNf6GjZ2ys0ADoTAAAAAAerOVpTb6JGri8xT2yjL0JqnXpze0ZJmpJeQ+IACZgh8WbVjPSm84XLpzJhG4jP2dlWfeOn15GzsVmwAdCQAAAAAAaDhdy7mg9eNUHjl1M+TuEVnTu1DdVOTEzm4aX6vwAROFNxm5bn+HWNKw2+uS3nLRFyeyWTL1qjrVZ1JbyeR8Julyr4ABYgAAAAAAS+Fxcr6lhZxlv9uR7Z2FW5al8FP8AU+vkXlvb07enopRwur6snllOjSOoAJHfFWLlTlFbtNGWw1yaaa3TNYRL2wp3S1fDU6SX+j4ZaZZtnQdri3q209NWOOz6M4lkwAAFz7mh86fohK1s7DRO4bm5SxHKzl+S8i0PHuc/KqaiD73sVPT7bPlCXfGNtxLi9jF4lWxtvCXVZ7dibhdhhdjGoj4rZxg5yrJRTkn4Xyw8PodKd9b1NWibemUYvwSXN7dP7O+F2PcAEKXFbWMpRlJpxznbliTj37o+Fxm0cNScsLfKxjw6vtn0J+F2GF2AK98Usq1SNvPMnUaSTjyeXgVOD0ZSzCc4LtuWGEfRstnQ0qvc0PnT9EC1BvKs1H//2Q==">
+                        <% }else{ %>
+                            <img class="img-circl" src="/questions/profile/<%= maxId.author.profilePhoto %>" alt="">
+                        <% } %>
+                        <p><%= maxId.author.username %></p>
+                        <p>Answered <%= maxId.created.toDateString() %></p>
+                    </div>
+                    
+                <% } %>
+                <% var count = 0 ,totalAns = 0%>
+                <% i.answers.forEach(function(answer){ %>
+                    <% if(currentUser && answer.author.id.equals(currentUser._id)){ %>
+                        <% count = 1; %>
+                    <% } %>
+                    <% totalAns = 1; %>
+                <% }); %>
+                <% if(count == 0 && totalAns == 0){ %>
+                    <a class="btn btn-sm btn-success b_id" href="/questions/<%= i._id %>/answers/new">Answer</a>
+                <% } %>
+                <% if(currentUser && i.author.id.equals(currentUser._id)){ %>
+                    <a href="/questions/<%= i._id %>/edit" class="btn btn-warning btn-sm b_id">Edit</a>
+                    <form class="form_delete" action="/questions/<%= i._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger btn-sm b_id">Delete</button>                            
+                    </form>
+                <% } %>
+                <div>
+                    
+                    <hr>
+                    <div class="ansp">
+                        <% if(maxId != 0){ %>
+                            <% if(maxId.answer.length <=200){ %>
+                                <%- maxId.answer %>
+                            <% } else{ %>
+                                <% var l = maxId.answer.indexOf("</p>") %>
+                                <%- maxId.answer.substring(0,200)%>
+                                <span class="sel">
+                                    <span class="more">...(more)</span> 
+                                    <span class="show_full"><%-maxId.answer.substring(200,maxId.answer.length) %></span>
+                                </span>
+                            <% } %>
+                        <% }%>
+                    </div> 
+                </div>
+            </div>
+            <div class="col-md-3">
+                
+            </div>
+        </div>
+    </div>            
+<% }); %>
+
+<!-- Trying to add popup-->
+ <div id="abc">
+<!-- Popup Div Starts Here -->
+<div id="popupContact">
+<!-- Contact Us Form -->
+<form action="/questions" id="form" method="post" name="form">
+    <div id="icon_cross">
+        <i id="close" class="fas fa-times" onclick ="div_hide()"></i>
+    </div>
+    <div>
+        <p>Tips on getting good answers quickly</p>
+        <ul>
+            <li>Make sure your question hasn't been asked already</li>
+            <li>Keep your question short and to the point</li>
+            <li>Double-check grammar and spelling</li>
+        </ul>
+    </div>
+    <hr>
+    <input id="name" class="p_in" name="question" placeholder="Start your question with &quot;What&quot;,&quot;How&quot;,&quot;Why&quot;,etc." type="text">
+    <hr>
+    <a href="javascript:%20check_empty()" class="btn btn-primary" id="submit">Send</a>
+</form>
+</div>
+<!-- Popup Div Ends Here -->
+</div>
+    
+<% include ../partials/footer %>

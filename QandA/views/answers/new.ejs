@@ -1,0 +1,18 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div id="ans_form">
+        <span class="heading_style"><h1><%= question.question %></h1></span>
+        <form action="/questions/<%= question._id %>" method="POST">
+            <div class="form-group">
+                <textarea   name="answer" placeholder="Write your answer here"></textarea>
+                <script>
+                        CKEDITOR.replace( 'answer' );
+                </script>
+            </div>
+        <button class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+<% include ../partials/footer %>

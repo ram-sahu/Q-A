@@ -1,0 +1,65 @@
+<% include ../partials/header %>
+
+<div class="container box_size">
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-8">
+            <h1><%= question.question %></h1>
+                <% var count = 0 %>
+                <% question.answers.forEach(function(answer){ %>
+                    <% if(currentUser && answer.author.id.equals(currentUser._id)){ %>
+                        <% count = 1; %>
+                    <% } %>
+                <% }); %>
+                <% if(count == 0){ %>
+                    <a class="btn btn-sm btn-success b_id" href="/questions/<%= question._id %>/answers/new">Answer</a>
+                <% } %>
+            <hr>
+        </div>
+    </div>
+    <% question.answers.forEach(function(i){ %>
+        <%var j=0;%>
+        <% i.likeFlag.forEach(function(f){ %> 
+            <% if(f.id.equals(currentUser._id)){ %>
+                <% j = f.flag ; %>
+            <% } %>
+        <% }); %>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-8">
+                <p><strong>Answered By : <%= i.author.username %></strong></p>
+                <% if(currentUser && i.author.id.equals(currentUser._id)){ %>
+                    <a href="/questions/<%= question._id %>/answers/<%= i._id %>/edit" class="btn btn-warning btn-sm">Edit</a>
+                    <form class="form_delete" action="/questions/<%= question._id%>/answers/<%= i._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger btn-sm">Delete</button>                            
+                    </form>
+                <% } %>
+                <p><%- i.answer %></p>
+                <div>
+                    <% if(currentUser){ %>
+                        <% if(j == 0 ){ %>
+                            <div class="lo">
+                                <form class="cf" data-id="<%= i._id %>">
+                                    <button class="btn x">Upvote</button>
+                                </form>
+                                <span id="vaa"><strong><%= i.likes %></strong></span> 
+                            </div>
+                        <% }else{ %>
+                            <div class="lo">
+                            <form class="cf" data-id="<%= i._id %>">
+                                <button class="btn tc x">Upvote</button>
+                            </form>
+                            <span id="vaa"><strong><%= i.likes %></strong></span> 
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+                <hr>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+<% include ../partials/footer %>
